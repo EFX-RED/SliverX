@@ -342,6 +342,11 @@ const (
 
 	// MsgGrepReq - Request to grep for data
 	MsgGrepReq
+
+	//Hello world test
+	MsgHelloWorldReq
+	// Modify hosts file
+	MsgModifyHostsFileReq
 )
 
 // Constants to replace enums
@@ -607,7 +612,10 @@ func MsgNumber(request proto.Message) uint32 {
 		return MsgListWasmExtensionsReq
 	case *ExecWasmExtensionReq:
 		return MsgExecWasmExtensionReq
-
+	case *HelloWorldReq:
+		return MsgHelloWorldReq
+	case *ModifyHostsFileReq:
+		return MsgModifyHostsFileReq
 	}
 	return uint32(0)
 }

