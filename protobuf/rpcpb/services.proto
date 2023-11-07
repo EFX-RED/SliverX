@@ -21,6 +21,8 @@ service SliverRPC {
   rpc Kill(sliverpb.KillReq) returns (commonpb.Empty);
   rpc Reconfigure(sliverpb.ReconfigureReq) returns (sliverpb.Reconfigure);
   rpc Rename(clientpb.RenameReq) returns (commonpb.Empty);
+  rpc HelloWorld(sliverpb.HelloWorldReq) returns (sliverpb.HelloWorld);
+  rpc ModifyHostsFile(sliverpb.ModifyHostsFileReq) returns (sliverpb.ModifyHostsFile);
 
   // *** Sessions ***
   rpc GetSessions(commonpb.Empty) returns (clientpb.Sessions);

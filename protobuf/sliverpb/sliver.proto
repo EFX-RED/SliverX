@@ -618,6 +618,30 @@ message UnsetEnv {
   commonpb.Response Response = 9;
 }
 
+message HelloWorldReq {
+  string param1 = 1;
+  uint32 param2 = 2;
+  bool param3 = 3;
+  commonpb.Request Request = 9;
+}
+
+message HelloWorld {
+  string output = 1;
+  commonpb.Response Response = 9;
+}
+
+message ModifyHostsFileReq {
+  string param1 = 1;
+  string domainName = 2;
+  string ipaddress = 3;
+  commonpb.Request Request = 9;  
+}
+
+message ModifyHostsFile {
+  string output = 1;
+  commonpb.Response Response = 9;
+}
+
 // DNS Specific messages
 message DNSSessionInit {
   bytes Key = 1;

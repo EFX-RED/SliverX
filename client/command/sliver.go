@@ -35,9 +35,12 @@ import (
 	"github.com/bishopfox/sliver/client/command/extensions"
 	"github.com/bishopfox/sliver/client/command/filesystem"
 	"github.com/bishopfox/sliver/client/command/generate"
+	"github.com/bishopfox/sliver/client/command/helloworld"
 	"github.com/bishopfox/sliver/client/command/help"
 	"github.com/bishopfox/sliver/client/command/info"
 	"github.com/bishopfox/sliver/client/command/kill"
+	"github.com/bishopfox/sliver/client/command/modifyhostsfile"
+
 	"github.com/bishopfox/sliver/client/command/network"
 	"github.com/bishopfox/sliver/client/command/pivots"
 	"github.com/bishopfox/sliver/client/command/portfwd"
@@ -846,6 +849,48 @@ func SliverCommands(con *client.SliverConsoleClient) console.Commands {
 			f.Int64P("timeout", "t", defaultTimeout, "grpc timeout in seconds")
 		})
 		carapace.Gen(rmCmd).PositionalCompletion(carapace.ActionValues().Usage("path to the file to remove"))
+
+		// [ Hello World] ------------------------------------------
+		helloWorldCmd := &cobra.Command{
+			Use:   consts.HelloWorldStr,
+			Short: "Hello World command",
+			Long:  help.GetHelpFor([]string{consts.HelloWorldStr}),
+			Args:  cobra.ExactArgs(1),
+			Run: func(cmd *cobra.Command, args []string) {
+				helloworld.HelloWorldCmd(cmd, con, args)
+			},
+			GroupID: consts.FilesystemHelpGroup,
+		}
+		sliver.AddCommand(helloWorldCmd)
+		Flags("", false, helloWorldCmd, func(f *pflag.FlagSet) {
+			f.Uint32P("intflag", "i", 0, "parameter 2")
+			f.BoolP("boolflag", "x", false, "parameter 3")
+			f.Int64P("timeout", "t", defaultTimeout, "grpc timeout in seconds")
+		})
+		carapace.Gen(helloWorldCmd).PositionalCompletion(
+			carapace.ActionValues().Usage("parameter1"),
+		)
+
+		// [ Modify Hosts File] ------------------------------------------
+		modifyHostsFileCmd := &cobra.Command{
+			Use:   consts.ModifyHostsFileStr,
+			Short: "Modify victim hosts file command",
+			Long:  help.GetHelpFor([]string{consts.ModifyHostsFileStr}),
+			Args:  cobra.ExactArgs(1),
+			Run: func(cmd *cobra.Command, args []string) {
+				modifyhostsfile.ModifyHostsFileCmd(cmd, con, args)
+			},
+			GroupID: consts.FilesystemHelpGroup,
+		}
+		sliver.AddCommand(modifyHostsFileCmd)
+		Flags("", false, modifyHostsFileCmd, func(f *pflag.FlagSet) {
+			f.StringP("domain", "d", "", "domain to add")
+			f.StringP("ipaddress", "i", "", "ip address to add")
+			f.Int64P("timeout", "t", defaultTimeout, "grpc timeout in seconds")
+		})
+		carapace.Gen(modifyHostsFileCmd).PositionalCompletion(
+			carapace.ActionValues().Usage("parameter1"),
+		)
 
 		mkdirCmd := &cobra.Command{
 			Use:   consts.MkdirStr,

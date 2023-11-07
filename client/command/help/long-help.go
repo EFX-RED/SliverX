@@ -79,6 +79,8 @@ var (
 		consts.PsExecStr:           psExecHelp,
 		consts.BackdoorStr:         backdoorHelp,
 		consts.SpawnDllStr:         spawnDllHelp,
+		consts.HelloWorldStr:       helloWorldHelp,
+		consts.ModifyHostsFileStr:  modifyHostsFileHelp,
 
 		consts.WebsitesStr:                  websitesHelp,
 		consts.ScreenshotStr:                screenshotHelp,
@@ -295,6 +297,19 @@ On Windows, escaping is disabled. Instead, '\\' is treated as path separator.
 
 	mkdirHelp = `[[.Bold]]Command:[[.Normal]] mkdir [remote path]
 [[.Bold]]About:[[.Normal]] Create a remote directory.`
+
+	helloWorldHelp = `[[.Bold]]Command:[[.Normal]] hello world test
+[[.Bold]]About:[[.Normal]] Prints a debugging test message`
+
+	modifyHostsFileHelp = `[[.Bold]]Command:[[.Normal]] Modifies victim hosts file
+[[.Bold]]About:[[.Normal]] Injects a new line into the hosts file of the victim
+
+The operator provides a domain name and an IP, sliver will inject the new string into the
+file hosts for a Windows machine.
+
+1. Example:
+2. modifyHostsFile www.newdomain 1.2.3.4 
+`
 
 	rmHelp = `[[.Bold]]Command:[[.Normal]] rm [remote path]
 [[.Bold]]About:[[.Normal]] Delete a remote file or directory.`
