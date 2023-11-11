@@ -1,54 +1,28 @@
-# Sliver
+# SliverX
 
-Sliver is an open source cross-platform adversary emulation/red team framework, it can be used by organizations of all sizes to perform security testing. Sliver's implants support C2 over Mutual TLS (mTLS), WireGuard, HTTP(S), and DNS and are dynamically compiled with per-binary asymmetric encryption keys.
+Customized version of Sliver C2 Framework.
 
-The server and client support MacOS, Windows, and Linux. Implants are supported on MacOS, Windows, and Linux (and possibly every Golang compiler target but we've not tested them all).
+- How to compile after debuggin:
 
-[![Release](https://github.com/BishopFox/sliver/actions/workflows/autorelease.yml/badge.svg)](https://github.com/BishopFox/sliver/actions/workflows/autorelease.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/BishopFox/sliver)](https://goreportcard.com/report/github.com/BishopFox/sliver) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+1) First run the "make" command in the main SliverX folder
+2) Then run each of these customized commands to build binaries sliver-server and sliver-client, the ones that "make" builds do not work.
 
-# v1.6.0 / `master`
+Server binary: 
 
-**NOTE:** You are looking the latest master branch of Sliver v1.6.0; PRs should target this branch starting on 6/1/2023 ('MURICA format). However, this branch is NOT RECOMMENDED for production use yet. Please use release tagged versions for the best experience.
+go build -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.0.0 -X github.com/bishopfox/sliver/client/version.CompiledAt=November -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=HostFileChanger -X github.com/bishopfox/sliver/client/version.GitDirty=RedTeam" -tags osusergo,netgo,go_sqlite,server ./server/main.go
 
-For PRs containing bug fixes specific to Sliver v1.5, please target the [`v1.5.x/master` branch](https://github.com/BishopFox/sliver/tree/v1.5.x/master).
+Client binary:
+go build -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.0.0 -X github.com/bishopfox/sliver/client/version.CompiledAt=November -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=HostFileChanger -X github.com/bishopfox/sliver/client/version.GitDirty=RedTeam" -tags osusergo,netgo,go_sqlite,server ./client/main.go
 
-### Features
+Version Addon Description
+----------------
+## SliverX v1.0.0
 
-- Dynamic code generation
-- Compile-time obfuscation
-- Multiplayer-mode
-- Staged and Stageless payloads
-- [Procedurally generated C2](<https://github.com/BishopFox/sliver/wiki/HTTP(S)-C2#under-the-hood>) over HTTP(S)
-- [DNS canary](https://github.com/BishopFox/sliver/wiki/DNS-C2#dns-canaries) blue team detection
-- [Secure C2](https://github.com/BishopFox/sliver/wiki/Transport-Encryption) over mTLS, WireGuard, HTTP(S), and DNS
-- Fully scriptable using [JavaScript/TypeScript](https://github.com/moloch--/sliver-script) or [Python](https://github.com/moloch--/sliver-py)
-- Windows process migration, process injection, user token manipulation, etc.
-- Let's Encrypt integration
-- In-memory .NET assembly execution
-- COFF/BOF in-memory loader
-- TCP and named pipe pivots
-- Much more!
+Customized version of Sliver.
 
-### Getting Started
+Addons:
 
-Download the latest [release](https://github.com/BishopFox/sliver/releases) and see the Sliver [wiki](https://github.com/BishopFox/sliver/wiki/Getting-Started) for a quick tutorial on basic setup and usage. To get the very latest and greatest compile from source.
+1) Added an implant windows command "modifyhostsfile" which takes as parameters a domain and an ip.
+Example:
 
-#### Linux One Liner
-
-`curl https://sliver.sh/install|sudo bash` and then run `sliver`
-
-### Help!
-
-Please checkout the [wiki](https://github.com/BishopFox/sliver/wiki), or start a [GitHub discussion](https://github.com/BishopFox/sliver/discussions). We also tend to hang out in the #golang Slack channel on the [Bloodhound Gang](https://bloodhoundgang.herokuapp.com/) server.
-
-### Compile From Source
-
-See the [wiki](https://github.com/BishopFox/sliver/wiki/Compile-From-Source).
-
-### Feedback
-
-Please take a moment and fill out [our survey](https://forms.gle/SwVsHFNh24ChG58C6)
-
-### License - GPLv3
-
-Sliver is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html), some sub-components may have separate licenses. See their respective subdirectories in this project for details.
+modifyhostsfile new -d www.newdomain.com -i 1.2.3.4 -t 40000
